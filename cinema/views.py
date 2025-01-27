@@ -1,7 +1,15 @@
 from django.db.models import F, Count
 from rest_framework import viewsets
 
-from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order, Ticket
+from cinema.models import (
+    Genre,
+    Actor,
+    CinemaHall,
+    Movie,
+    MovieSession,
+    Order,
+    Ticket
+)
 
 from cinema.serializers import (
     GenreSerializer,
@@ -12,7 +20,10 @@ from cinema.serializers import (
     MovieSessionListSerializer,
     MovieDetailSerializer,
     MovieSessionDetailSerializer,
-    MovieListSerializer, OrderSerializer, OrderListSerializer, TicketSerializer,
+    MovieListSerializer,
+    OrderSerializer,
+    OrderListSerializer,
+    TicketSerializer,
 )
 
 
@@ -44,10 +55,9 @@ class MovieViewSet(viewsets.ModelViewSet):
 
         return MovieSerializer
 
-
     def get_queryset(self):
         queryset = super().get_queryset()
-        if self.action == ("list", "retrieve"):
+        if self.action in ("list", "retrieve"):
             queryset = self.queryset.prefetch_related("actors", "genres")
 
         actors = self.request.query_params.get("actors")
@@ -110,6 +120,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(show_time__date=date)
 
         return queryset.distinct()
+
 
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
